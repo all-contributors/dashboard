@@ -115,4 +115,18 @@ those copies instead of downloading again. That folder is gitignored
 because the logs include individual account information, so the raw
 data is not committed to this repository.
 
+## View the dashboard
+
+The dashboard is a static page, `index.html` and `dashboard.js` at the
+root of the repo, that reads the CSV files in `data/`. Browsers block a
+page opened from disk from reading those files, so serve the repo
+locally:
+
+```sh
+npm install
+npm run dashboard
+```
+
+Then open <http://localhost:3000/>.
+
 [gh]: https://cli.github.com/

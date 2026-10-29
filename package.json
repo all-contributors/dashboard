@@ -1,0 +1,16 @@
+{
+  "name": "all-contributors-metrics",
+  "private": true,
+  "type": "module",
+  "description": "Usage metrics for the All Contributors bot",
+  "license": "BSD-3-Clause",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "collect": "node scripts/collect-stats.mjs"
+  },
+  "dependencies": {
+    "octokit": "^5.0.5"
+  }
+}

@@ -1,95 +1,29 @@
 # All-Contributors metrics
 
-Metrics for the All Contributors project. Right now that means how widely
-the [All Contributors bot][app] is installed. This repo holds:
+Welcome to the metrics repo for the All Contributors project. This repo stores
+the [All Contributors bot // app's][app] usage data across GitHub.
 
+The structure of the repo includes:
 * The data files: `data/usage.csv` and `data/top-accounts.csv`
 * [`scripts/collect-stats.mjs`](scripts/collect-stats.mjs), which counts
   installations, repositories and stars, and appends the results to the
   CSV files
-* A one-time backfill script that recovered about three months of history
-  from old workflow logs
-* (Eventually) a small dashboard that charts the data
+* A one-time backfill script that recovered about three months of history from the stats.yml workflow that was running daily in the app. repository but failing at the end (transferring the data to logflare which we do not have access to)
+* Eventually we will build a small dashboard that displays the data via github pages.
+
+Local setup is in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## Collect new data
 
-`scripts/collect-stats.mjs` logs in as the All Contributors GitHub App,
-walks through every installation (10 at a time), and adds one row to
-`data/usage.csv` and ten rows to `data/top-accounts.csv`. Running it twice
-on the same day replaces that day's rows rather than adding duplicates.
+[`.github/workflows/collect_stats.yml`](.github/workflows/collect_stats.yml)
+runs at 1:00am Monday, Mountain time. During daylight saving time that
+is 2:00am. It logs in as the All Contributors GitHub App, counts
+installations, repositories, and stars, then commits the CSV files on
+the default branch. A second run on the same UTC day replaces that
+day's rows.
 
-### What you need
-
-* Node 22 or newer
-* The app's **App ID**
-* A **private key** for the app
-
-### Get the App ID
-
-1. Go to the app's settings page on GitHub. An admin of the
-   `all-contributors` organization can reach it from the organization's
-   Settings > Developer settings > GitHub Apps.
-2. Find **App ID** in the "About" section at the top of the page.
-
-The App ID is a number, for example `12345`. Don't confuse it with the
-Client ID, which is a string that starts with `Iv`.
-
-### Get the private key
-
-1. On the same settings page, scroll to the **Private keys** section.
-2. Click **Generate a private key**. GitHub downloads a `.pem` file.
-3. Keep the file outside this repository. Delete the key from the app's
-   settings when you no longer need it.
-
-The key is the full contents of the `.pem` file, including the
-`-----BEGIN ... PRIVATE KEY-----` and `-----END ... PRIVATE KEY-----`
-lines.
-
-### Input format
-
-The script reads two environment variables:
-
-| Variable | Format |
-| --- | --- |
-| `APP_ID` | The numeric App ID, such as `12345` |
-| `APP_PRIVATE_KEY` | The full text of the `.pem` file |
-
-The key can also be on a single line, with `\n` in place of line breaks
-(as some secret stores save it). The script converts them back.
-
-### Run it
-
-Install the dependencies once:
-
-```sh
-npm install
-```
-
-Do a dry run first. It prints the totals and the top accounts but doesn't
-change any files:
-
-```sh
-APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/path/to/key.pem)" \
-  node scripts/collect-stats.mjs --dry-run
-```
-
-When the numbers look right, run it again without `--dry-run` to update
-the CSV files:
-
-```sh
-APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/path/to/key.pem)" npm run collect
-```
-
-### Notes
-
-* **It takes a while.** There are about 9,000 installations. The script
-  prints progress every 500.
-* **Some installations can't be read.** The script lists their
-  installation IDs (not account names) and counts them as zero repos,
-  the same way the old action did. A handful is normal.
-* **Check the numbers.** Compare the totals with the last row of
-  `data/usage.csv`. Installations and repositories change slowly, so a
-  big jump or drop means something went wrong.
+You can also start that workflow by hand using the workflow dispatch
+event from the Actions tab.
 
 ## The data
 
@@ -144,12 +78,10 @@ most stars.
 
 ## What's next
 
-The collection script is done. Next:
+The weekly collection workflow is in place. Next:
 
-* Switch the stats workflow to run weekly (Sunday night). The totals
-  change slowly.
-* Drop the broken Logflare step and have the workflow append to the CSV
-  files in this repo instead.
+* Turn off `.github/workflows/stats.yml` in `all-contributors/app`
+  once a weekly run here looks right.
 * Start tracking how often the bot is actually called, using the app's
   webhook delivery counts.
 * Build a small JS dashboard that reads the CSV files from this repo.
@@ -180,7 +112,7 @@ It had three problems:
 * **The action is out of date.** It was last updated in 2023, and GitHub
   is moving it to a newer Node version.
 
-In short, the numbers were printed to logs but never saved, which wasted
+The data were printed to logs but never saved, which wasted
 time and resources. `scripts/collect-stats.mjs` replaces the action, and
 the workflow can now run less often.
 
@@ -204,13 +136,7 @@ runs on record had already expired.
 
 The script was written with Claude Code. A few rows were checked by hand
 against the logs and match, but the full output has not been verified.
-
-To run it again you need Node and the [GitHub CLI][gh], logged in with
-read access to `all-contributors/app`:
-
-```sh
-node scripts/backfill-stats.mjs
-```
+How to run it again is in [DEVELOPMENT.md](DEVELOPMENT.md).
 
 It saves a copy of each log in `raw-logs/`, and on later runs it reads
 those copies instead of downloading again. That folder is gitignored
@@ -226,4 +152,3 @@ of the script.
 [app]: https://github.com/all-contributors/app
 [stats]: https://github.com/all-contributors/app/blob/main/.github/workflows/stats.yml
 [action]: https://github.com/gr2m/app-stats-action
-[gh]: https://cli.github.com/

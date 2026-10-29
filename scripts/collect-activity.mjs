@@ -4,8 +4,9 @@
 //   week_start,prs_opened
 //   2019-01-07,1
 //
-// Weeks run Monday to Sunday (UTC). week_start is the Monday. The last
-// row is the current week, so its count is partial until the week ends.
+// Weeks run Monday to Sunday (UTC). week_start is the Monday. Only
+// finished weeks are recorded, so the last row is the week that ended
+// most recently, never a partial week.
 //
 // Every bot request that succeeds ends in a pull request being opened or
 // updated, so this is the closest public measure of how often people use
@@ -16,8 +17,8 @@
 //
 //   GITHUB_TOKEN="$(gh auth token)" node scripts/collect-activity.mjs
 //
-// By default only weeks missing from the file and the last two weeks are
-// fetched, since older weeks don't change. Pass --backfill to fetch every
+// By default only finished weeks missing from the file are fetched, since
+// a finished week's count doesn't change. Pass --backfill to fetch every
 // week since the bot's first pull request (January 2019); that takes
 // about 17 minutes because search allows 30 requests a minute. Pass
 // --dry-run to print the counts without writing the file.
@@ -47,11 +48,12 @@ function log(step, message) {
 
 const isoDate = ms => new Date(ms).toISOString().slice(0, 10)
 
-// Mondays as YYYY-MM-DD strings, from start through the current week.
-function weeksFrom(start) {
+// Mondays as YYYY-MM-DD strings, from start through the last week that
+// has ended (UTC). The current, unfinished week is left out.
+function finishedWeeksFrom(start) {
   const now = Date.now()
   const weeks = []
-  for (let t = Date.parse(start); t <= now; t += 7 * DAY_MS) {
+  for (let t = Date.parse(start); t + 7 * DAY_MS <= now; t += 7 * DAY_MS) {
     weeks.push(isoDate(t))
   }
   return weeks
@@ -74,11 +76,10 @@ if (existsSync(csvPath)) {
   }
 }
 
-const allWeeks = weeksFrom(FIRST_WEEK)
-const recent = new Set(allWeeks.slice(-2))
+const allWeeks = finishedWeeksFrom(FIRST_WEEK)
 const toFetch = backfill
   ? allWeeks
-  : allWeeks.filter(week => !existing.has(week) || recent.has(week))
+  : allWeeks.filter(week => !existing.has(week))
 
 const minutes = Math.ceil((toFetch.length * PAUSE_MS) / 60000)
 log(
@@ -88,7 +89,10 @@ log(
 )
 
 const octokit = new Octokit({auth: token})
-const counts = new Map(existing)
+// Drop any unfinished week left in the file by an older version of this
+// script.
+const finished = new Set(allWeeks)
+const counts = new Map([...existing].filter(([week]) => finished.has(week)))
 
 function write() {
   const rows = [...counts.entries()].sort(([a], [b]) => a.localeCompare(b))

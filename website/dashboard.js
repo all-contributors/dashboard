@@ -66,7 +66,8 @@ document.querySelector('#installations-table tbody').append(
 )
 
 // bot-prs-weekly.csv: one row per week (Monday start), oldest first.
-// Weeks are summed into the month they start in; the last month is partial.
+// Only finished weeks are recorded. Weeks are summed into the month they
+// start in, so the newest month is partial until a week starts in the next.
 const weekly = await d3.csv('data/bot-prs-weekly.csv', d3.autoType)
 const monthly = d3
   .rollups(
@@ -76,12 +77,17 @@ const monthly = d3
   )
   .map(([month, prs]) => ({month, prs}))
   .sort((a, b) => a.month - b.month)
-const currentMonth = monthly.at(-1)?.month
+const lastWeek = weekly.at(-1)?.week_start
+const nextWeekMonth =
+  lastWeek && d3.utcMonth.floor(d3.utcDay.offset(lastWeek, 7))
+const partialMonth = monthly.find(
+  d => d.month.getTime() === nextWeekMonth?.getTime(),
+)?.month
 
 const formatMonth = d3.utcFormat('%B %Y')
 
 function prsChart(data, width) {
-  const isPartial = d => d.month === currentMonth
+  const isPartial = d => d.month === partialMonth
   return Plot.plot({
     width,
     height: 360,
@@ -127,7 +133,7 @@ new ResizeObserver(() => {
 document.querySelector('#prs-table tbody').append(
   ...monthly.toReversed().map(d => {
     const row = document.createElement('tr')
-    row.innerHTML = `<td>${formatMonth(d.month)}${d.month === currentMonth ? ' (so far)' : ''}</td><td>${formatCount(d.prs)}</td>`
+    row.innerHTML = `<td>${formatMonth(d.month)}${d.month === partialMonth ? ' (so far)' : ''}</td><td>${formatCount(d.prs)}</td>`
     return row
   }),
 )

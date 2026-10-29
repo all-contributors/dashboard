@@ -9,7 +9,8 @@ The structure of the repo includes:
   installations, repositories and stars, and appends the results to the
   CSV files
 * A one-time backfill script that recovered about three months of history from the stats.yml workflow that was running daily in the app. repository but failing at the end (transferring the data to logflare which we do not have access to)
-* Eventually we will build a small dashboard that displays the data via github pages.
+* A static dashboard in [`website/`](website/), published by the
+  [deploy workflow](.github/workflows/deploy_dashboard.yml)
 
 Local setup is in [DEVELOPMENT.md](DEVELOPMENT.md).
 
@@ -24,6 +25,19 @@ day's rows.
 
 You can also start that workflow by hand using the workflow dispatch
 event from the Actions tab.
+
+## View the dashboard
+
+The chart is published to GitHub Pages from `main`:
+
+<https://all-contributors.github.io/metrics/>
+
+The [deploy workflow](.github/workflows/deploy_dashboard.yml) runs
+when the page or the CSV files change, and you can start it by hand
+from the Actions tab. The first run needs Pages set to **GitHub
+Actions** under Settings > Pages. A weekly stats commit on `main`
+publishes the new numbers. Local viewing is in
+[DEVELOPMENT.md](DEVELOPMENT.md).
 
 ## The data
 
@@ -84,7 +98,6 @@ The weekly collection workflow is in place. Next:
   once a weekly run here looks right.
 * Start tracking how often the bot is actually called, using the app's
   webhook delivery counts.
-* Build a small JS dashboard that reads the CSV files from this repo.
 
 ## History and background
 

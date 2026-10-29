@@ -9,7 +9,7 @@
   },
   "scripts": {
     "collect": "node scripts/collect-stats.mjs",
-    "dashboard": "serve . --listen 3000"
+    "dashboard": "mkdir -p _site/data && cp website/index.html website/dashboard.js _site/ && cp data/*.csv _site/data/ && serve _site --listen 3000"
   },
   "dependencies": {
     "octokit": "^5.0.5"

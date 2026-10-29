@@ -101,9 +101,9 @@ The app can have several keys at once, and some belong to past
 maintainers. Please reach our to the maintainer team before creating a new key
 or deleting an old one.
 
-### Run the script locally
+### Run the collect-stats.mjs script locally
 
-The script reads the App ID and key from two environment variables:
+The collect-stats.mjs script  reads the App ID and private key from two environment variables:
 
 | Variable | Value |
 | --- | --- |
@@ -116,31 +116,24 @@ Install the dependencies once:
 npm install
 ```
 
-Do a dry run first. It prints the totals and the top accounts but doesn't
-change any files:
+Start with a quick test run. It fetches only 5 installations, prints each
+step, and doesn't change any files. It finishes in seconds, so it's an easy
+way to check that your App ID and private key work:
 
 ```sh
 APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/.secrets/all-contributors-app.pem)" \
-  node scripts/collect-stats.mjs --dry-run
+  npm run collect:test
 ```
 
-When the numbers look right, run it again without `--dry-run` to update the
-CSV files:
+The totals from a test run are partial, so they won't match
+`data/usage.csv`. That's expected.
+
+Once the test run works, do the full run. It fetches every installation and
+updates the CSV files:
 
 ```sh
 APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/.secrets/all-contributors-app.pem)" \
   npm run collect
-```
-
-To test the file update without a full run, pass `--limit` with a small
-number. This fetches that many installations, writes today's rows, and
-prints each step. The counts are partial, so restore the CSV files
-afterward unless you want to keep them:
-
-```sh
-APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/.secrets/all-contributors-app.pem)" \
-  node scripts/collect-stats.mjs --limit 5
-git checkout data/
 ```
 
 ### Things to know

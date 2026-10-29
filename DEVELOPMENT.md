@@ -18,8 +18,12 @@ There are two ways to work here:
 
 The dashboard is a static page located in the `website/` directory:
 
-* `index.html` is the landing page and currently has a single plot on it
+* `index.html` is the landing page: headings, text, and a slot for each chart
+* `style.css` holds the colors and layout, including dark mode
 * `dashboard.js` loads the CSV files from `data/` and draws the charts
+
+Every file in `website/` is published, so a new file there needs no other
+setup.
 
 The data are updated weekly via a cron job (see below for more).
 
@@ -40,17 +44,37 @@ Then open http://localhost:3000/ in your browser.
 
 ### How to update the dashboard
 
-1. To update the dashboard, first `website/index.html` or `website/dashboard.js`.
-2. Check the result at <http://localhost:3000/>.
-3. Open a pull request.
+1. Edit the files in `website/`.
+2. Stop `npm run dashboard` (Ctrl+C) and run it again. It copies the files
+   when it starts, so edits don't appear until you restart it.
+3. Check the result at <http://localhost:3000/>.
+4. Open a pull request.
 
 Don't edit the files in the `data/` directory by hand. The weekly workflow maintains
 these files. The entire workflow takes about 30-40 minutes to run.
 
 ### What the data means
 
-See the [README](README.md#the-data) for the columns in `usage.csv` and
-`top-accounts.csv`, and for what the numbers do and don't measure.
+See the [README](README.md#the-data) for the columns in `usage.csv`,
+`top-accounts.csv`, and `bot-prs-weekly.csv`, and for what the numbers do
+and don't measure.
+
+### Update the pull request counts
+
+`data/bot-prs-weekly.csv` comes from
+[`scripts/collect-activity.mjs`](scripts/collect-activity.mjs). It only
+reads public search results, so any GitHub token works and you don't need
+the app's credentials. If you have the [GitHub CLI][gh] logged in:
+
+```sh
+GITHUB_TOKEN="$(gh auth token)" npm run collect:activity
+```
+
+By default it fetches only missing weeks and the last two weeks, which
+takes a few seconds. Add `-- --dry-run` to print the counts without
+writing the file. Add `-- --backfill` to fetch every week since January
+2019 again. A backfill takes about 17 minutes, because GitHub's search
+API allows 30 requests a minute.
 
 ### How the dashboard is published
 

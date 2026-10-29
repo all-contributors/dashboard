@@ -1,14 +1,28 @@
-# All-Contributors metrics
+# All-Contributors Dashboard
 
-Welcome to the metrics repo for the All Contributors project. This repo stores
+Welcome to the dashboard repo for the All Contributors project. This repo stores
 the [All Contributors bot // app's][app] usage data across GitHub.
 
+## how to run the dashboard locally
+
+To run the dashboard locally, you need to:
+
+1. Clone the repository
+2. Install the dependencies
+3. Run the dashboard
+4. npm run dev
+
+## Repo structure
+
 The structure of the repo includes:
-* The data files: `data/usage.csv` and `data/top-accounts.csv`
+* The data files: `data/usage.csv`, `data/top-accounts.csv`, and
+  `data/bot-prs-weekly.csv`. See [the data](#the-data) for what's in each
 * [`scripts/collect-stats.mjs`](scripts/collect-stats.mjs), which counts
   installations, repositories and stars, and appends the results to the
   CSV files
-* A one-time backfill script that recovered about three months of history from the stats.yml workflow that was running daily in the app. repository but failing at the end (transferring the data to logflare which we do not have access to)
+* [`scripts/collect-activity.mjs`](scripts/collect-activity.mjs), which
+  counts the pull requests the bot opens each week
+* A one-time backfill script that recovered about three months of history that collects the number of installations, repositories and stars associated with those installations from the `stats.yml` workflow. That workflow (as of october 29 2026) is running in the app reposioty daily and takes 3-4 hours to complete. it also is failing when it tries to transfer the data to LogFlare due to a token issue (and we do not have access to it). So instead this workflow repo and dashboard will replace the dated and slow stats.yml workflow in the app repo.
 * A static dashboard in [`website/`](website/), published by the
   [deploy workflow](.github/workflows/deploy_dashboard.yml)
 
@@ -23,14 +37,21 @@ installations, repositories, and stars, then commits the CSV files on
 the default branch. A second run on the same UTC day replaces that
 day's rows.
 
-You can also start that workflow by hand using the workflow dispatch
+A second workflow,
+[`.github/workflows/collect_activity.yml`](.github/workflows/collect_activity.yml),
+runs at 1:00am Saturday, Mountain time (2:00am during daylight saving
+time). It counts the pull requests the bot opened and commits
+`data/bot-prs-weekly.csv`. It only needs the workflow's built-in token,
+so it finishes in a minute or two.
+
+You can also start either workflow by hand using the workflow dispatch
 event from the Actions tab.
 
 ## View the dashboard
 
 The chart is published to GitHub Pages from `main`:
 
-<https://all-contributors.github.io/metrics/>
+<https://all-contributors.github.io/dashboard/>
 
 The [deploy workflow](.github/workflows/deploy_dashboard.yml) runs
 when the page or the CSV files change, and you can start it by hand
@@ -41,8 +62,17 @@ publishes the new numbers. Local viewing is in
 
 ## The data
 
-Both files live in [`data/`](data/). They're plain CSV, sorted oldest
-first, so new rows can be appended to the end.
+All three files live in [`data/`](data/). They're plain CSV, sorted
+oldest first, so new rows can be appended to the end.
+
+| File | What it tracks | How often | Written by |
+| --- | --- | --- | --- |
+| `usage.csv` | Installations and repositories | Weekly | `collect-stats.mjs` |
+| `top-accounts.csv` | The ten accounts with the most stars | Weekly | `collect-stats.mjs` |
+| `bot-prs-weekly.csv` | Pull requests the bot opened | Weekly | `collect-activity.mjs` |
+
+The first two show the bot's reach: where it's installed. The third
+shows how often people actually use it.
 
 ### `usage.csv`
 
@@ -71,6 +101,20 @@ most stars.
 | `login` | The user or organization name |
 | `stars` | Total stars of the public repos the bot can access |
 
+### `bot-prs-weekly.csv`
+
+One row per week, from the bot's first pull request in January 2019 to
+now. Each count comes from a GitHub search for
+`is:pr author:app/allcontributors` limited to that week.
+
+| Column | What it means |
+| --- | --- |
+| `week_start` | The Monday the week starts on (UTC). Weeks run Monday to Sunday |
+| `prs_opened` | Pull requests the bot opened that week, in public repos |
+
+The dashboard groups these weeks into months, by the month each week
+starts in.
+
 ### Reading the numbers
 
 * **Stars only count repos the bot can see.** If an account installed
@@ -87,8 +131,16 @@ most stars.
   the old logs (2026-08-01 to 2026-10-29) are workflow runs in the
   `all-contributors/app` repo. Newer rows are runs in this repo, or
   `local` when someone ran the script by hand.
-* **This measures reach, not use.** The numbers show how many places the
-  bot is installed, not how often anyone calls it.
+* **`usage.csv` measures reach, not use.** The numbers show how many
+  places the bot is installed, not how often anyone calls it. Use
+  `bot-prs-weekly.csv` for that.
+* **Pull request counts are a close measure of use, not an exact one.**
+  When someone asks the bot to add a contributor, it opens a pull
+  request, or updates one that's already open. Updates aren't counted,
+  and neither are private repos.
+* **The last week is partial.** The newest row in `bot-prs-weekly.csv`
+  is the current week, so its count grows until the week ends. Each run
+  fetches the last two weeks again to fill them in.
 
 ## What's next
 
@@ -96,7 +148,7 @@ The weekly collection workflow is in place. Next:
 
 * Turn off `.github/workflows/stats.yml` in `all-contributors/app`
   once a weekly run here looks right.
-* Start tracking how often the bot is actually called, using the app's
+* Get a fuller picture of use, including private repos, from the app's
   webhook delivery counts.
 
 ## History and background

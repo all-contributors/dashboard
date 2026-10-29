@@ -1,3 +1,8 @@
 # Raw Actions logs saved by scripts/backfill-stats.mjs. They include
 # error output that names individual installations, so keep them local.
 raw-logs/
+
+node_modules/
+
+# App private keys. Never commit these.
+*.pem

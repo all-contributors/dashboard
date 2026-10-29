@@ -4,5 +4,8 @@ raw-logs/
 
 node_modules/
 
+# Local copy of the site, built by npm run dashboard.
+_site/
+
 # App private keys. Never commit these.
 *.pem

@@ -8,9 +8,13 @@
     "node": ">=22"
   },
   "scripts": {
-    "collect": "node scripts/collect-stats.mjs"
+    "collect": "node scripts/collect-stats.mjs",
+    "dashboard": "serve . --listen 3000"
   },
   "dependencies": {
     "octokit": "^5.0.5"
+  },
+  "devDependencies": {
+    "serve": "^14.2.6"
   }
 }

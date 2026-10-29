@@ -10,7 +10,8 @@
   "scripts": {
     "collect": "node scripts/collect-stats.mjs",
     "collect:test": "node scripts/collect-stats.mjs --dry-run --limit 5",
-    "dashboard": "mkdir -p _site/data && cp website/index.html website/dashboard.js _site/ && cp data/*.csv _site/data/ && serve _site --listen 3000",
+    "collect:activity": "node scripts/collect-activity.mjs",
+    "dashboard": "mkdir -p _site/data && cp website/* _site/ && cp data/*.csv _site/data/ && serve _site --listen 3000",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
   },

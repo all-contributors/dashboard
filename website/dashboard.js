@@ -64,3 +64,70 @@ document.querySelector('#installations-table tbody').append(
     return row
   }),
 )
+
+// bot-prs-weekly.csv: one row per week (Monday start), oldest first.
+// Weeks are summed into the month they start in; the last month is partial.
+const weekly = await d3.csv('data/bot-prs-weekly.csv', d3.autoType)
+const monthly = d3
+  .rollups(
+    weekly,
+    weeks => d3.sum(weeks, d => d.prs_opened),
+    d => d3.utcMonth.floor(d.week_start),
+  )
+  .map(([month, prs]) => ({month, prs}))
+  .sort((a, b) => a.month - b.month)
+const currentMonth = monthly.at(-1)?.month
+
+const formatMonth = d3.utcFormat('%B %Y')
+
+function prsChart(data, width) {
+  const isPartial = d => d.month === currentMonth
+  return Plot.plot({
+    width,
+    height: 360,
+    marginLeft: 56,
+    x: {type: 'utc', label: null},
+    y: {grid: true, label: 'Pull requests per month', tickFormat: '~s'},
+    style: {color: 'var(--text-secondary)'},
+    marks: [
+      Plot.rectY(data, {
+        x: 'month',
+        y: 'prs',
+        interval: 'month',
+        fill: 'var(--series-1)',
+        fillOpacity: d => (isPartial(d) ? 0.45 : 1),
+        // 1px each side leaves a 2px gap between bars
+        insetLeft: 1,
+        insetRight: 1,
+        ry2: 4,
+      }),
+      Plot.ruleY([0], {stroke: 'var(--grid)'}),
+      Plot.tip(
+        data,
+        Plot.pointerX({
+          x: d => d3.utcDay.offset(d.month, 15),
+          y: 'prs',
+          title: d =>
+            `${formatMonth(d.month)}${isPartial(d) ? ' (so far)' : ''}\n` +
+            `${formatCount(d.prs)} pull requests opened`,
+        }),
+      ),
+    ],
+  })
+}
+
+const prsFigure = document.getElementById('prs-chart')
+let prsRenderedWidth
+new ResizeObserver(() => {
+  if (prsFigure.clientWidth === prsRenderedWidth) return
+  prsRenderedWidth = prsFigure.clientWidth
+  prsFigure.replaceChildren(prsChart(monthly, prsRenderedWidth))
+}).observe(prsFigure)
+
+document.querySelector('#prs-table tbody').append(
+  ...monthly.toReversed().map(d => {
+    const row = document.createElement('tr')
+    row.innerHTML = `<td>${formatMonth(d.month)}${d.month === currentMonth ? ' (so far)' : ''}</td><td>${formatCount(d.prs)}</td>`
+    return row
+  }),
+)

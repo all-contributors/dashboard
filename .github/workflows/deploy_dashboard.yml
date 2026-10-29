@@ -34,7 +34,7 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir -p _site/data
-          cp website/index.html website/dashboard.js _site/
+          cp website/* _site/
           cp data/*.csv _site/data/
 
       - name: Upload the site

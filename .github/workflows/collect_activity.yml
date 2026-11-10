@@ -6,6 +6,8 @@ on:
     - cron: '0 8 * * 6'
   workflow_dispatch: ~
 
+permissions: {}
+
 concurrency:
   group: collect-activity
   cancel-in-progress: false

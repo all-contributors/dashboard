@@ -6,6 +6,8 @@ on:
     - cron: '0 8 * * 1'
   workflow_dispatch: ~
 
+permissions: {}
+
 concurrency:
   group: collect-stats
   cancel-in-progress: false

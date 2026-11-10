@@ -4,13 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
-
-# pages: write and id-token: write are required by deploy-pages.
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+  workflow_dispatch: ~
 
 concurrency:
   group: pages
@@ -19,6 +13,11 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # pages: write and id-token: write are required by deploy-pages.
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

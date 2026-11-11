@@ -8,8 +8,7 @@ on:
       - synchronize
       - reopened
 
-permissions:
-  pull-requests: read
+permissions: {}
 
 concurrency:
   group: pr-title-${{ github.event.pull_request.number }}
@@ -18,6 +17,8 @@ concurrency:
 jobs:
   pr-title:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
     steps:
       - name: Check for a Conventional Commits title
         uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1

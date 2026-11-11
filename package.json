@@ -5,7 +5,7 @@
   "description": "Usage metrics for the All Contributors bot",
   "license": "BSD-3-Clause",
   "engines": {
-    "node": ">=22"
+    "node": ">=26"
   },
   "scripts": {
     "collect": "node scripts/collect-stats.mjs",
@@ -21,5 +21,6 @@
   "devDependencies": {
     "@biomejs/biome": "2.6.4",
     "serve": "^14.2.6"
-  }
+  },
+  "packageManager": "pnpm@12.18.0"
 }

@@ -23,19 +23,19 @@
     "octokit": "^5.0.5"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@eslint/markdown": "^8.0.3",
-    "@types/node": "^26.6.6",
-    "eslint": "^10.14.0",
-    "eslint-plugin-package-json": "^1.14.0",
-    "eslint-plugin-perfectionist": "^5.13.0",
-    "eslint-plugin-yml": "^3.10.0",
-    "jiti": "^2.7.0",
-    "lint-staged": "^17.6.0",
-    "oxfmt": "^0.78.0",
+    "@eslint/js": "10.0.1",
+    "@eslint/markdown": "8.0.3",
+    "@types/node": "26.6.6",
+    "eslint": "10.14.0",
+    "eslint-plugin-package-json": "1.14.0",
+    "eslint-plugin-perfectionist": "5.13.0",
+    "eslint-plugin-yml": "3.10.0",
+    "jiti": "2.7.0",
+    "lint-staged": "17.6.0",
+    "oxfmt": "0.78.0",
     "serve": "14.2.7",
-    "simple-git-hooks": "^2.14.0",
-    "typescript-eslint": "^8.72.2"
+    "simple-git-hooks": "2.14.0",
+    "typescript-eslint": "8.72.2"
   },
   "packageManager": "pnpm@12.18.0",
   "engines": {

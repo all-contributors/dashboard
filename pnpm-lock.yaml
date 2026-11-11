@@ -174,7 +174,7 @@ importers:
         specifier: 2.6.6
         version: 2.6.6
       serve:
-        specifier: ^14.2.6
+        specifier: 14.2.7
         version: 14.2.7(supports-color@7.2.0)
 
 packages:

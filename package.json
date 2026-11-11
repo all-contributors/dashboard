@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.6",
-    "serve": "^14.2.6"
+    "serve": "14.2.7"
   },
   "packageManager": "pnpm@12.18.0"
 }

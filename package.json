@@ -1,26 +1,33 @@
 {
   "name": "all-contributors-metrics",
   "private": true,
-  "type": "module",
   "description": "Usage metrics for the All Contributors bot",
   "license": "BSD-3-Clause",
-  "engines": {
-    "node": ">=26"
-  },
+  "type": "module",
   "scripts": {
     "collect": "node scripts/collect-stats.mjs",
-    "collect:test": "node scripts/collect-stats.mjs --dry-run --limit 5",
     "collect:activity": "node scripts/collect-activity.mjs",
+    "collect:test": "node scripts/collect-stats.mjs --dry-run --limit 5",
     "dashboard": "mkdir -p _site/data && cp website/* _site/ && cp data/*.csv _site/data/ && serve _site --listen 3000",
-    "lint": "biome check .",
-    "lint:fix": "biome check --write ."
+    "lint": "eslint ."
   },
   "dependencies": {
     "octokit": "^5.0.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.6",
-    "serve": "14.2.7"
+    "@eslint/js": "^10.0.1",
+    "@eslint/markdown": "^8.0.3",
+    "@types/node": "^26.6.6",
+    "eslint": "^10.14.0",
+    "eslint-plugin-package-json": "^1.14.0",
+    "eslint-plugin-perfectionist": "^5.13.0",
+    "eslint-plugin-yml": "^3.10.0",
+    "jiti": "^2.7.0",
+    "serve": "14.2.7",
+    "typescript-eslint": "^8.72.2"
   },
-  "packageManager": "pnpm@12.18.0"
+  "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=26"
+  }
 }

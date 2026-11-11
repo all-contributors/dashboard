@@ -7,10 +7,10 @@ Observable.
 
 There are two ways to work here:
 
-* **[Work on the dashboard](#work-on-the-dashboard).** Anyone can do this.
+- **[Work on the dashboard](#work-on-the-dashboard).** Anyone can do this.
   You don't need any keys or secrets, because the data is already in the
   repo and is updated every week.
-* **[Update the data (maintainers only)](#update-the-data-maintainers-only).**
+- **[Work on the data scripts (maintainers only)](#work-on-the-data-scripts-maintainers-only).**
   Running the collection script needs the All Contributors app's
   credentials, which only maintainers have.
 
@@ -18,9 +18,9 @@ There are two ways to work here:
 
 The dashboard is a static page located in the `website/` directory:
 
-* `index.html` is the landing page: headings, text, and a slot for each chart
-* `style.css` holds the colors and layout, including dark mode
-* `dashboard.js` loads the CSV files from `data/` and draws the charts
+- `index.html` is the landing page: headings, text, and a slot for each chart
+- `style.css` holds the colors and layout, including dark mode
+- `dashboard.js` loads the CSV files from `data/` and draws the charts
 
 Every file in `website/` is published, so a new file there needs no other
 setup.
@@ -29,15 +29,15 @@ The data are updated weekly via a cron job (see below for more).
 
 ### What you need
 
-* Node.js 22 or newer
+- Node.js 22 or newer
 
 ### How to preview the dashboard locally
 
 To view the website you need to start a local server. You can do this by running the following commands:
 
 ```sh
-npm install
-npm run dashboard
+pnpm install
+pnpm dashboard
 ```
 
 Then open http://localhost:3000/ in your browser.
@@ -71,8 +71,8 @@ GITHUB_TOKEN="$(gh auth token)" npm run collect:activity
 ```
 
 By default it fetches only missing weeks and the last two weeks, which
-takes a few seconds. Add `-- --dry-run` to print the counts without
-writing the file. Add `-- --backfill` to fetch every week since January
+takes a few seconds. Add `--dry-run` to print the counts without
+writing the file. Add `--backfill` to fetch every week since January
 2019 again. A backfill takes about 17 minutes, because GitHub's search
 API allows 30 requests a minute.
 
@@ -88,8 +88,8 @@ Contributors GitHub App, and collects data about all of the installations across
 
 To run this script yourself, you need:
 
-* The app's **App ID**
-* A **private key** for the app
+- The app's **App ID**
+- A **private key** for the app
 
 You also need Node.js 22 or newer.
 
@@ -127,17 +127,17 @@ or deleting an old one.
 
 ### Run the collect-stats.mjs script locally
 
-The collect-stats.mjs script  reads the App ID and private key from two environment variables:
+The collect-stats.mjs script reads the App ID and private key from two environment variables:
 
-| Variable | Value |
-| --- | --- |
-| `APP_ID` | The numeric App ID, such as `12345` |
-| `APP_PRIVATE_KEY` | The full text of the `.pem` file |
+| Variable          | Value                               |
+| ----------------- | ----------------------------------- |
+| `APP_ID`          | The numeric App ID, such as `12345` |
+| `APP_PRIVATE_KEY` | The full text of the `.pem` file    |
 
 Install the dependencies once:
 
 ```sh
-npm install
+pnpm install
 ```
 
 Start with a quick test run. It fetches only 5 installations, prints each
@@ -145,8 +145,8 @@ step, and doesn't change any files. It finishes in seconds, so it's an easy
 way to check that your App ID and private key work:
 
 ```sh
-APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/.secrets/all-contributors-app.pem)" \
-  npm run collect:test
+  APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/.secrets/all-contributors-app.pem)" \
+  pnpm collect:test
 ```
 
 The totals from a test run are partial, so they won't match
@@ -156,22 +156,22 @@ Once the test run works, do the full run. It fetches every installation and
 updates the CSV files:
 
 ```sh
-APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/.secrets/all-contributors-app.pem)" \
-  npm run collect
+  APP_ID=12345 APP_PRIVATE_KEY="$(cat ~/.secrets/all-contributors-app.pem)" \
+  pnpm collect
 ```
 
 ### Things to know
 
-* **It takes a while.** There are about 9,000 installations. Progress is
+- **It takes a while.** There are about 9,000 installations. Progress is
   printed to the terminal: every installation for a short `--limit` run,
   and every 100 installations for a full run.
-* **Some installations can't be read.** The script lists their installation
+- **Some installations can't be read.** The script lists their installation
   IDs (not account names) and counts them as zero repos, the same way the
   old action did. A handful is normal.
-* **Check the numbers.** Compare the totals with the last row of
+- **Check the numbers.** Compare the totals with the last row of
   `data/usage.csv`. Installations and repositories change slowly, so a big
   jump or drop means something went wrong.
-* **Running twice in one day is safe.** The second run replaces that day's
+- **Running twice in one day is safe.** The second run replaces that day's
   rows instead of adding duplicates.
 
 ### Repository secrets for the weekly workflow
@@ -181,10 +181,10 @@ The weekly workflow,
 reads two repository secrets on `all-contributors/metrics`. Both must exist
 before its first run:
 
-| Secret | Value |
-| --- | --- |
-| `APP_ID` | The numeric App ID, such as `12345` |
-| `APP_PRIVATE_KEY` | The full text of the `.pem` file |
+| Secret            | Value                               |
+| ----------------- | ----------------------------------- |
+| `APP_ID`          | The numeric App ID, such as `12345` |
+| `APP_PRIVATE_KEY` | The full text of the `.pem` file    |
 
 Paste the whole `.pem` file, including the `BEGIN` and `END` lines. Real
 line breaks are fine. A single line with `\n` in place of the breaks is

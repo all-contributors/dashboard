@@ -52,10 +52,14 @@ const config: ConfigObject[] = defineConfig([
     extends: [yml.configs['flat/standard'], yml.configs['flat/prettier']],
     files: ['**/*.{yml,yaml}'],
     rules: {
-      'yml/sort-sequence-values': [
-        'error',
-        { order: { type: 'asc' }, pathPattern: '^.*$' },
-      ],
+      'yml/sort-sequence-values': ['error', { order: { type: 'asc' }, pathPattern: '^.*$' }],
+    },
+  },
+  {
+    files: ['pnpm-workspace.yaml'],
+    rules: {
+      'yml/file-extension': 'off',
+      'yml/sort-keys': ['error', { order: { type: 'asc' }, pathPattern: '^.*$' }],
     },
   },
 ]);

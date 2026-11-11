@@ -9,7 +9,15 @@
     "collect:activity": "node scripts/collect-activity.mjs",
     "collect:test": "node scripts/collect-stats.mjs --dry-run --limit 5",
     "dashboard": "mkdir -p _site/data && cp website/* _site/ && cp data/*.csv _site/data/ && serve _site --listen 3000",
-    "lint": "eslint ."
+    "format": "oxfmt",
+    "lint": "eslint .",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*": "oxfmt --no-error-on-unmatched-pattern"
   },
   "dependencies": {
     "octokit": "^5.0.5"
@@ -23,7 +31,10 @@
     "eslint-plugin-perfectionist": "^5.13.0",
     "eslint-plugin-yml": "^3.10.0",
     "jiti": "^2.7.0",
+    "lint-staged": "^17.6.0",
+    "oxfmt": "^0.78.0",
     "serve": "14.2.7",
+    "simple-git-hooks": "^2.14.0",
     "typescript-eslint": "^8.72.2"
   },
   "packageManager": "pnpm@12.18.0",

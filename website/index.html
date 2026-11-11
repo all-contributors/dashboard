@@ -1,42 +1,51 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>All Contributors bot usage</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Accounts using the All Contributors bot</h1>
-  <p class="subtitle">
-    Active installations over time. Each installation is one GitHub user or
-    organization. Hover over the chart to see daily values.
-  </p>
-  <figure id="installations-chart"></figure>
-  <details>
-    <summary>Show the data as a table</summary>
-    <table id="installations-table">
-      <thead><tr><th>Date</th><th>Active installations</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </details>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>All Contributors bot usage</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Accounts using the All Contributors bot</h1>
+    <p class="subtitle">
+      Active installations over time. Each installation is one GitHub user or organization. Hover
+      over the chart to see daily values.
+    </p>
+    <figure id="installations-chart"></figure>
+    <details>
+      <summary>Show the data as a table</summary>
+      <table id="installations-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Active installations</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </details>
 
-  <h2>Pull requests opened by the bot each month (2019-Present)</h2>
-  <p class="subtitle">
-    Each pull request adds someone to a project's contributors list, so this
-    shows how often people use the bot. Weeks are grouped by the month they
-    start in. Only public repositories are counted, and the lighter bar is the
-    current month so far. Hover over a bar to see its value.
-  </p>
-  <figure id="prs-chart"></figure>
-  <details>
-    <summary>Show the data as a table</summary>
-    <table id="prs-table">
-      <thead><tr><th>Month</th><th>Pull requests opened</th></tr></thead>
-      <tbody></tbody>
-    </table>
-  </details>
+    <h2>Pull requests opened by the bot each month (2019-Present)</h2>
+    <p class="subtitle">
+      Each pull request adds someone to a project's contributors list, so this shows how often
+      people use the bot. Weeks are grouped by the month they start in. Only public repositories are
+      counted, and the lighter bar is the current month so far. Hover over a bar to see its value.
+    </p>
+    <figure id="prs-chart"></figure>
+    <details>
+      <summary>Show the data as a table</summary>
+      <table id="prs-table">
+        <thead>
+          <tr>
+            <th>Month</th>
+            <th>Pull requests opened</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </details>
 
-  <script type="module" src="dashboard.js"></script>
-</body>
+    <script type="module" src="dashboard.js"></script>
+  </body>
 </html>

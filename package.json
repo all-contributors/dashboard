@@ -25,7 +25,7 @@
   "devDependencies": {
     "@eslint/js": "10.0.1",
     "@eslint/markdown": "8.0.3",
-    "@types/node": "26.6.6",
+    "@types/node": "26.6.7",
     "eslint": "10.15.0",
     "eslint-plugin-package-json": "1.14.0",
     "eslint-plugin-perfectionist": "5.14.0",
